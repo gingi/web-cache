@@ -1,0 +1,10 @@
+{
+            "name": "web-cache",
+     "description": "A seamless web cache",
+          "author": "Shiran Pasternak",
+         "version": "0.0.1",
+        "keywords": [ "server", "cache", "redis" ],
+    "dependencies": {
+           "redis": ">=0.8.2"
+    }
+}
