@@ -1,11 +1,84 @@
-Redis Web Cache
-===============
-Author: Shiran Pasternak
+#Web Cache
+A seamless web cache using [Redis](http://redis.io/) as a backend. The cache
+allows the server to avoid making repeated expensive or long-waiting route
+handling. This is useful for serving static content or a relatively static
+data API.
 
+This module acts as middleware for web servers built on
+[Connect](https://npmjs.org/package/connect), such as
+[Express](https://npmjs.org/package/express). Other than configuring it in
+the web server, it does not require any other custom code. It also has some
+sensible defaults so you can hit the ground running.
 
+The cache expires items not accessed after a configurable age.
 
-License
--------
+Note that a Redis server needs to be running for the cache to operate.
+
+##Example
+
+    var express = require('express'),
+        cache   = require('web-cache');
+    
+    var app = express();
+    
+    app.configure(function () {
+        app.use(cache.middleware({
+            path:    '/api',
+            exclude: [ /ignore\/.*\/path/ ],
+            expire:  86400 // One day
+        }));
+    });
+    
+    // This path will be cached
+    app.get('/api/resource/:id', function (req, res, next) {
+        // Fancy-pants calculation
+        res.end(/* Large JSON object */);
+    });
+    
+    app.get('/docs/:id');                 // Will NOT be cached
+    app.get('/api/list/ignore/:id/path'); // Will NOT be cached
+    
+    app.listen(3000);
+    
+## API
+The only API call **Web Cache** supports (at the moment) is `middleware`.
+
+###client.middleware(params)
+Provides Redis-based caching for the web server. `params` is an associative list with the following supported properties:
+
+* `prefix`: (*string*) The prefix to use for caching. Useful for running multiple caches on the same server.
+ 
+  **Default** `web-cache`
+  
+* `expire`: (*integer*) The age of items (in seconds) at which to expire them from the cache.
+
+  **Default:** `86400` (one day)
+  
+* `path`: (*string* or *RegExp*) The path matching routes that should be cached.
+
+  **Default:** `/`
+
+* `exclude`: (*array* of *string* or *RegExp*) A list of routes which the cache should exclude.
+
+  **Default:** `null`
+
+* `host`: The Redis host.
+
+  **Default:** `127.0.0.1`
+
+* `port`: The Redis port.
+
+  **Default:** `6379`
+
+##Limitations
+The following are temporary and are being implemented, or thought about.
+
+* Only supports JSON content for the moment.
+* Will not cache multiple chunks from streaming responses.
+* No limit on size or count of cached items.
+* NO TESTS! (Yet)
+
+##License
 Copyright (c) 2013 Shiran Pasternak <shiranpasternak@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
