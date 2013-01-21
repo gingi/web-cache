@@ -15,5 +15,12 @@
             "bugs": {
              "url": "http://bitbucket.org/gingi/web-cache/issues"
             },
-        "licenses": [ { "type": "MIT" } ]
+        "licenses": [ { "type": "MIT" } ],
+ "devDependencies": {
+         "express": ">=3.0",
+           "mocha": ">=1.8.1",
+          "should": ">=1.2.1",
+       "supertest": ">=0.5.1",
+           "async": ">=0.1.22"
+ }
 }
