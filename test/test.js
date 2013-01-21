@@ -77,14 +77,48 @@ describe('HTTP app', function () {
     });
 });
 
-describe('expire param', function () {
-    var seconds = 3;
+describe("HTML content", function () {
     var app = express()
         .use(cache.middleware({
+            path: "/pages",
+            prefix: 'test-web-cache-html',
+            clean: true
+        }));
+    var counter = 0;
+    app.get('/pages', function (req, res) {
+        counter++;
+        res.send("<html><body>" + counter + "</body></html>");
+    });
+    it("should handle cached Content-Type: text/html", function (done) {
+        var times = 2;
+        var reqs = [];
+        for (var i = 0; i < times; i++) {
+            (function (i) {
+                reqs.push(function (callback) {
+                    request(app).get("/pages")
+                        .expect("Content-Type", /text\/html/)
+                        .expect("<html><body>1</body></html>")
+                        .end(function (err, res) {
+                            if (err) throw err;
+                            callback(null, i);
+                        });
+                });
+            })(i);
+            async.series(reqs, function () { done() });
+        }
+    });
+});
+
+/*
+describe('expire param', function () {
+    var seconds = 13;
+    var app = express()
+        .use(cache.middleware({
+            name: "test-web-cache-expire",
             expire: seconds
         }));
-    app.get('/path')
     it("should expire cache", function (done) {
         done();
     })
 })
+*/
