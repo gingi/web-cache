@@ -63,10 +63,9 @@ Provides Redis-based caching for the web server. `params` is an associative list
 ##Limitations
 The following are temporary and are being implemented, or thought about.
 
-* Only supports JSON content for the moment.
 * Will not cache multiple chunks from streaming responses.
 * No limit on size or count of cached items.
-* NO TESTS! (Yet)
+* Not using Cache-Control headers at the moment.
 
 ##License
     Copyright (c) 2013 Shiran Pasternak <shiranpasternak@gmail.com>
