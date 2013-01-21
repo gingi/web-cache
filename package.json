@@ -1,7 +1,10 @@
 {
             "name": "web-cache",
      "description": "A seamless web cache",
-          "author": "Shiran Pasternak",
+          "author": {
+            "name": "Shiran Pasternak",
+           "email": "shiranpasternak@gmail.com"
+          },
          "version": "0.0.1",
         "keywords": [ "server", "cache", "redis" ],
     "dependencies": {
@@ -16,6 +19,9 @@
              "url": "http://bitbucket.org/gingi/web-cache/issues"
             },
         "licenses": [ { "type": "MIT" } ],
+         "scripts": {
+            "test": "make test"
+         },
  "devDependencies": {
          "express": ">=3.0",
            "mocha": ">=1.8.1",
