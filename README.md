@@ -46,27 +46,40 @@ The only API call **Web Cache** supports (at the moment) is `middleware`.
 ###client.middleware(params)
 Provides Redis-based caching for the web server. `params` is an associative list with the following supported properties:
 
-* `prefix`: *string* \[default: `web-cache`]  The prefix to use for caching. Useful for running multiple caches on the same server.
+* `prefix`: *string* \[default: `web-cache`]
+
+  The prefix to use for caching. Useful for running multiple caches on the same server.
   
-* `expire`: (*integer*) \[default: `86400`  The age of items (in seconds) at which to expire them from the cache.
+* `expire`: *integer* \[default: `86400`]
+
+  The age of items (in seconds) at which to expire them from the cache.
   
-* `path`: (*string* or *Re  The path matching routes that should be cached.
+* `path`: *string* or *RegExp* \[default: `/`]
 
-* `exclude`: *array* of *string  A list of routes which the cache should exclude.
+  The path matching routes that should be cached.
 
-* `host`: *string* \[default: `127.0.0.1`] The Redis host.
+* `exclude`: *array* of *string* or *RegExp* \[default: `null`]
 
-* `port`: *string* \[default: `6379`] The Redis port.
+  A list of routes which the cache should exclude.
 
-* `clean`: *boolean* \[default: `false`] Remove all currently-cached items.
+* `host`: *string* \[default: `127.0.0.1`]
+
+  The Redis host.
+
+* `port`: *string* \[default: `6379`]
+
+  The Redis port.
+
+* `clean`: *boolean* \[default: `false`]
+
+  Remove all currently-cached items.
 
 ##Limitations
 The following are temporary and are being implemented, or thought about.
 
-* Only supports JSON content for the moment.
 * Will not cache multiple chunks from streaming responses.
 * No limit on size or count of cached items.
-* NO TESTS! (Yet)
+* Not using Cache-Control headers at the moment.
 
 ##License
     Copyright (c) 2013 Shiran Pasternak <shiranpasternak@gmail.com>
