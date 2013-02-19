@@ -13,7 +13,7 @@
             "main": "lib/web-cache.js",
       "repository": {
             "type": "git",
-             "url": "git://bitbucket.org/gingi/web-cache.git"
+             "url": "https://github.com/gingi/web-cache"
       },
             "bugs": {
              "url": "http://bitbucket.org/gingi/web-cache/issues"

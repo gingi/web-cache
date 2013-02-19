@@ -40,6 +40,11 @@ Note that a Redis server needs to be running for the cache to operate.
     
     app.listen(3000);
     
+## Installation
+The module can be downloaded from [the NPM Registry](https://npmjs.org/ "npm") using:
+
+    npm install web-cache
+    
 ## API
 The only API call **Web Cache** supports (at the moment) is `middleware`.
 
