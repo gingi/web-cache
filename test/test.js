@@ -75,6 +75,39 @@ describe('HTTP app', function () {
         }
         async.series(reqs, function () { done() });
     });
+    it("should not cache error responses", function (done) {
+        var errRequestCounter = 1;
+        app.get('/err500', function (req, res) {
+            res.send(500, {
+                error: "Error" + errRequestCounter 
+            });
+            errRequestCounter++;
+        })
+        async.series([
+            function (callback) {
+                // First request
+                request(app).get('/err500')
+                    .expect(500)
+                    .expect({ error: "Error1" }, function (err) {
+                        callback(err);
+                    }
+                );
+            },
+            function (callback) {  
+                // Second request
+                request(app).get('/err500')
+                    .expect(500).expect({ error: "Error2" }, function (err) {
+                        callback(err);
+                    }
+                )
+            }
+        ], function (err, results) {
+            if (err) {
+                throw err;
+            }
+            done();
+        });
+    })
 });
 
 describe("HTML content", function () {

@@ -81,6 +81,10 @@ The following are temporary and are being implemented, or thought about.
 * No limit on size or count of cached items.
 * Not using Cache-Control headers at the moment.
 
+##Changelog
+####v0.0.3
+* Only caches responses with non-error statuses (200).
+
 ##License
     Copyright (c) 2013 Shiran Pasternak <shiranpasternak@gmail.com>
 

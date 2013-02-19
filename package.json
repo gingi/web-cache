@@ -5,7 +5,7 @@
             "name": "Shiran Pasternak",
            "email": "shiranpasternak@gmail.com"
           },
-         "version": "0.0.2",
+         "version": "0.0.3",
         "keywords": [ "server", "cache", "redis" ],
     "dependencies": {
            "redis": ">=0.8.2"
