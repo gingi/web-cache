@@ -20,7 +20,7 @@ describe('redis server', function () {
     it("should complain when not running", function () {
         // cache.middleware({port: 53131}).should.throw(/Server not running/);
     })
-})
+});
 
 describe('HTTP app', function () {
     var app = express()
@@ -107,7 +107,37 @@ describe('HTTP app', function () {
             }
             done();
         });
-    })
+    });
+});
+
+describe("Default route", function () {
+    var app = express().use(cache.middleware());
+    var counter = 0;
+    app.get("/", function (req, res) {
+        counter++;
+        res.send({ value: counter });
+    });
+    
+    it("should allow caching", function (done) {
+        var req = request(app);
+        var times = 2;
+        var reqs = [];
+        for (var i = 0; i < times; i++) {
+            (function (i) { // Scoping 'i'
+                reqs.push(function (callback) {
+                    req.get('/')
+                        .expect("Content-type", /json/)
+                        .expect(200)
+                        .expect({ value: 1 })
+                        .end(function (err, res) {
+                            if (err) throw err;
+                            callback(null, i);
+                        });
+                });
+            })(i);
+        }
+        async.series(reqs, function (err, results) { done(); });
+    });
 });
 
 describe("HTML content", function () {
