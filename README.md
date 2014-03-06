@@ -1,14 +1,18 @@
 #Web Cache
-A seamless web cache using [Redis](http://redis.io/) as a backend. The cache
-allows the server to avoid making repeated expensive or long-waiting route
-handling. This is useful for serving static content or a relatively static
-data API.
+A seamless web cache for web servers.
 
-This module acts as middleware for web servers built on
-[Connect](https://npmjs.org/package/connect), such as
-[Express](https://npmjs.org/package/express). Other than configuring it in
-the web server, it does not require any other custom code. It also has some
-sensible defaults so you can hit the ground running.
+**Version 0.1.0**
+
+[![Build Status][status-img]][status]
+
+Using [Redis][redis] as a backend, the cache allows the server to avoid making
+repeated expensive or long-waiting route handling. This is useful for serving
+static content or a relatively static data API.
+
+This module acts as middleware for web servers built on [Connect][connect],
+such as [Express][express]. Other than configuring it in the web server, it
+does not require any other custom code. It also has some sensible defaults so
+you can hit the ground running.
 
 The cache expires items not accessed after a configurable age.
 
@@ -110,3 +114,10 @@ The following are temporary and are being implemented, or thought about.
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
     DEALINGS IN THE SOFTWARE.
+
+
+ [redis]:      http://redis.io/
+ [connect]:    https://npmjs.org/package/connect
+ [express]:    https://npmjs.org/package/express
+ [status-img]: https://travis-ci.org/gingi/web-cache.png
+ [status]:     https://travis-ci.org/gingi/web-cache
