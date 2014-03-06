@@ -16,7 +16,7 @@
              "url": "https://github.com/gingi/web-cache"
       },
             "bugs": {
-             "url": "http://bitbucket.org/gingi/web-cache/issues"
+             "url": "http://github.com/gingi/web-cache/issues"
             },
         "licenses": [ { "type": "MIT" } ],
          "scripts": {

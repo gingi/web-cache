@@ -124,7 +124,7 @@ describe("HTML content", function () {
         res.send("<html><body>" + counter + "</body></html>");
     });
     it("should handle cached Content-Type: text/html", function (done) {
-        function runGet(asyncCallback) {
+        function reqGet(asyncCallback) {
             request(app).get("/pages")
                 .expect("Content-Type", /text\/html/)
                 .expect("<html><body>1</body></html>")
@@ -134,11 +134,45 @@ describe("HTML content", function () {
                 });
         }
         async.waterfall([
-            runGet,
-            runGet
+            reqGet,
+            reqGet
         ], function () { done() });
     });
 });
+
+function reqGet(req, url, expect) {
+    return function (callback) {
+        req.get(url)
+            .expect(expect)
+            .end(function (err, res) {
+                if (err) throw err;
+                callback(null);
+            });
+    };
+}
+
+describe("Complex URL", function () {
+    var app = express().use(cache.middleware({ path: /^\/r/ }));
+    var counter = 0;
+    app.get("/r", function (req, res) {
+        counter++;
+        res.send({ counter: counter });
+    });
+    var req = request(app);
+    it("should allow caching", function (done) {
+        async.series([
+            reqGet(req, "/r?p=1&q=2", { counter: 1 }),
+            reqGet(req, "/r?p=1&q=2", { counter: 1 }),
+            reqGet(req, "/r?p=1&q=3", { counter: 2 }),
+        ], function (err, results) { done(); });
+    });
+    it("should allow caching of out-of-order keys", function (done) {
+        async.series([
+            reqGet(req, "/r?q=2&p=1", { counter: 1 }),
+            reqGet(req, "/r?p=4&q=3", { counter: 3 })
+        ], function (err, results) { done(); });
+    });
+})
 
 /*
 describe('expire param', function () {
