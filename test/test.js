@@ -7,11 +7,11 @@ var async   = require('async');
 
 describe('web-cache', function () {
     it("should export constructors", function () {
-        cache.middleware.should.be.a('function');
+        cache.middleware.should.be.a.Function;
     });
     describe('middleware', function () {
         it("should return a valid function with no arguments", function () {
-            cache.middleware().should.be.a('function');
+            cache.middleware().should.be.a.Function;
         });
     });
 });
@@ -115,7 +115,8 @@ describe("HTML content", function () {
         .use(cache.middleware({
             path: "/pages",
             prefix: 'test-web-cache-html',
-            clean: true
+            clean: true,
+            port: 6379
         }));
     var counter = 0;
     app.get('/pages', function (req, res) {
@@ -123,22 +124,19 @@ describe("HTML content", function () {
         res.send("<html><body>" + counter + "</body></html>");
     });
     it("should handle cached Content-Type: text/html", function (done) {
-        var times = 2;
-        var reqs = [];
-        for (var i = 0; i < times; i++) {
-            (function (i) {
-                reqs.push(function (callback) {
-                    request(app).get("/pages")
-                        .expect("Content-Type", /text\/html/)
-                        .expect("<html><body>1</body></html>")
-                        .end(function (err, res) {
-                            if (err) throw err;
-                            callback(null, i);
-                        });
+        function runGet(asyncCallback) {
+            request(app).get("/pages")
+                .expect("Content-Type", /text\/html/)
+                .expect("<html><body>1</body></html>")
+                .end(function (err, res) {
+                    if (err) throw err;
+                    asyncCallback(null);
                 });
-            })(i);
-            async.series(reqs, function () { done() });
         }
+        async.waterfall([
+            runGet,
+            runGet
+        ], function () { done() });
     });
 });
 
