@@ -91,6 +91,12 @@ The following are temporary and are being implemented, or thought about.
 * Not using Cache-Control headers at the moment.
 
 ##Changelog
+####v0.1.0
+* Allows caching of unordered query parameters [#2].
+* Default path now caches everything below root [#1].
+* Improved documentation.
+* Other bug fixes.
+
 ####v0.0.3
 * Only caches responses with non-error statuses (200).
 
