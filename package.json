@@ -5,7 +5,7 @@
             "name": "Shiran Pasternak",
            "email": "shiranpasternak@gmail.com"
           },
-         "version": "0.0.3",
+         "version": "0.1.0",
         "keywords": [ "server", "cache", "redis" ],
     "dependencies": {
            "redis": ">=0.8.2"
@@ -16,7 +16,7 @@
              "url": "https://github.com/gingi/web-cache"
       },
             "bugs": {
-             "url": "http://bitbucket.org/gingi/web-cache/issues"
+             "url": "http://github.com/gingi/web-cache/issues"
             },
         "licenses": [ { "type": "MIT" } ],
          "scripts": {
