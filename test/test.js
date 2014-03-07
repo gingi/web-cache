@@ -182,7 +182,7 @@ function reqGet(req, url, expect) {
 }
 
 describe("Complex URL", function () {
-    var app = express().use(cache.middleware({ path: /^\/r/ }));
+    var app = express().use(cache.middleware({ path: /^\/r/, clean: true }));
     var counter = 0;
     app.get("/r", function (req, res) {
         counter++;
@@ -191,15 +191,17 @@ describe("Complex URL", function () {
     var req = request(app);
     it("should allow caching", function (done) {
         async.series([
-            reqGet(req, "/r?p=1&q=2", { counter: 1 }),
-            reqGet(req, "/r?p=1&q=2", { counter: 1 }),
-            reqGet(req, "/r?p=1&q=3", { counter: 2 }),
+            reqGet(req, "/r?p=1&q=2", { counter: 1 }), // CacheSet
+            reqGet(req, "/r?p=1&q=2", { counter: 1 }), // CacheGet
+            reqGet(req, "/r?p=1&q=3", { counter: 2 }), // CacheSet
         ], function (err, results) { done(); });
     });
-    it("should allow caching of out-of-order keys", function (done) {
+    it("should allow caching of unordered keys", function (done) {
         async.series([
-            reqGet(req, "/r?q=2&p=1", { counter: 1 }),
-            reqGet(req, "/r?p=4&q=3", { counter: 3 })
+            reqGet(req, "/r?q=2&p=1", { counter: 1 }), // CacheGet (unsorted)
+            reqGet(req, "/r?p=4&q=3", { counter: 3 }), // CacheSet
+            reqGet(req, "/r?q=4&p=1", { counter: 4 }), // CacheSet (unsorte)
+            reqGet(req, "/r?p=1&q=4", { counter: 4 })  // CacheGet (sorted)
         ], function (err, results) { done(); });
     });
 })
