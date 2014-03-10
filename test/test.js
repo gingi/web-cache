@@ -5,6 +5,20 @@ var express = require('express');
 var request = require('supertest');
 var async   = require('async');
 
+function reqGet(req, url, expect, contentType) {
+    return function (callback) {
+        req = req.get(url);
+        if (contentType !== undefined) {
+            req.expect("Content-Type", contentType);
+        }
+        req.expect(200).expect(expect)
+            .end(function (err, res) {
+                if (err) throw err;
+                callback(null);
+            });
+    };
+}
+
 describe('web-cache', function () {
     it("should export constructors", function () {
         cache.middleware.should.be.a.Function;
@@ -22,7 +36,7 @@ describe('redis server', function () {
     })
 });
 
-describe('HTTP app', function () {
+describe('Basic functionality', function () {
     var app = express()
         .use(cache.middleware({
             path: "/count",
@@ -110,37 +124,28 @@ describe('HTTP app', function () {
     });
 });
 
-describe("Default route", function () {
+describe("web-cache with default route", function () {
     var app = express().use(cache.middleware());
     var counter = 0;
-    app.get("/", function (req, res) {
+    var respond = function (req, res) {
         counter++;
         res.send({ value: counter });
-    });
+    };
+    app.get("/", respond);
+    app.get("/cats", respond);
     
     it("should allow caching", function (done) {
         var req = request(app);
-        var times = 2;
-        var reqs = [];
-        for (var i = 0; i < times; i++) {
-            (function (i) { // Scoping 'i'
-                reqs.push(function (callback) {
-                    req.get('/')
-                        .expect("Content-type", /json/)
-                        .expect(200)
-                        .expect({ value: 1 })
-                        .end(function (err, res) {
-                            if (err) throw err;
-                            callback(null, i);
-                        });
-                });
-            })(i);
-        }
-        async.series(reqs, function (err, results) { done(); });
+        async.series([
+            reqGet(req, "/",     { value: 1 }, /json/),
+            reqGet(req, "/cats", { value: 2 }, /json/),
+            reqGet(req, "/",     { value: 1 }, /json/),
+            reqGet(req, "/cats", { value: 2 }, /json/)
+        ], function (err, results) { done(); });
     });
 });
 
-describe("HTML content", function () {
+describe("web-cache with HTML response", function () {
     var app = express()
         .use(cache.middleware({
             path: "/pages",
@@ -154,34 +159,15 @@ describe("HTML content", function () {
         res.send("<html><body>" + counter + "</body></html>");
     });
     it("should handle cached Content-Type: text/html", function (done) {
-        function reqGet(asyncCallback) {
-            request(app).get("/pages")
-                .expect("Content-Type", /text\/html/)
-                .expect("<html><body>1</body></html>")
-                .end(function (err, res) {
-                    if (err) throw err;
-                    asyncCallback(null);
-                });
-        }
+        var req = request(app);
         async.waterfall([
-            reqGet,
-            reqGet
+            reqGet(req, "/pages", "<html><body>1</body></html>", /text\/html/),
+            reqGet(req, "/pages", "<html><body>1</body></html>", /text\/html/)
         ], function () { done() });
     });
 });
 
-function reqGet(req, url, expect) {
-    return function (callback) {
-        req.get(url)
-            .expect(expect)
-            .end(function (err, res) {
-                if (err) throw err;
-                callback(null);
-            });
-    };
-}
-
-describe("Complex URL", function () {
+describe("web-cache with parameterized URLs", function () {
     var app = express().use(cache.middleware({ path: /^\/r/, clean: true }));
     var counter = 0;
     app.get("/r", function (req, res) {
@@ -204,7 +190,7 @@ describe("Complex URL", function () {
             reqGet(req, "/r?p=1&q=4", { counter: 4 })  // CacheGet (sorted)
         ], function (err, results) { done(); });
     });
-})
+});
 
 /*
 describe('expire param', function () {
