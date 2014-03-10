@@ -1,7 +1,7 @@
 #Web Cache
 A seamless web cache for web servers.
 
-**Version 0.1.0**
+**Version 0.1.1**
 
 [![Build Status][status-img]][status]
 
@@ -67,6 +67,10 @@ Provides Redis-based caching for the web server. `params` is an associative list
 
   The path matching routes that should be cached.
 
+* `keyGen`: *function* \[optional]
+
+  A custom key generator. Accepts the URL string and expected to return another.
+
 * `exclude`: *array* of *string* or *RegExp* \[default: `null`]
 
   A list of routes which the cache should exclude.
@@ -91,6 +95,11 @@ The following are temporary and are being implemented, or thought about.
 * Not using Cache-Control headers at the moment.
 
 ##Changelog
+####v0.1.1
+* Supports a custom key generator.
+* Fixes a bug with unordered query parameters.
+* Other fixes and improvements.
+
 ####v0.1.0
 * Allows caching of unordered query parameters [#2].
 * Default path now caches everything below root [#1].
